@@ -1,3 +1,4 @@
-/Users/zhangbokun/Documents/mr/cmake-build-debug/CMakeFiles/mr.dir
+/Users/zhangbokun/Documents/mr/cmake-build-debug/CMakeFiles/mrFunc.dir
+/Users/zhangbokun/Documents/mr/cmake-build-debug/CMakeFiles/worker.dir
 /Users/zhangbokun/Documents/mr/cmake-build-debug/CMakeFiles/edit_cache.dir
 /Users/zhangbokun/Documents/mr/cmake-build-debug/CMakeFiles/rebuild_cache.dir

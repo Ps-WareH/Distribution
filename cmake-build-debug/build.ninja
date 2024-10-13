@@ -109,6 +109,37 @@ build worker: CXX_EXECUTABLE_LINKER__worker_Debug CMakeFiles/worker.dir/src/work
   TARGET_FILE = worker
   TARGET_PDB = worker.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target master
+
+
+#############################################
+# Order-only phony target for master
+
+build cmake_object_order_depends_target_master: phony || CMakeFiles/master.dir
+
+build CMakeFiles/master.dir/src/master.cpp.o: CXX_COMPILER__master_unscanned_Debug /Users/zhangbokun/Documents/mr/src/master.cpp || cmake_object_order_depends_target_master
+  DEP_FILE = CMakeFiles/master.dir/src/master.cpp.o.d
+  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
+  OBJECT_DIR = CMakeFiles/master.dir
+  OBJECT_FILE_DIR = CMakeFiles/master.dir/src
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target master
+
+
+#############################################
+# Link the executable master
+
+build master: CXX_EXECUTABLE_LINKER__master_Debug CMakeFiles/master.dir/src/master.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk
+  OBJECT_DIR = CMakeFiles/master.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = master
+  TARGET_PDB = master.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -147,7 +178,7 @@ build mrFunc: phony lib/libmrFunc.dylib
 #############################################
 # Folder: /Users/zhangbokun/Documents/mr/cmake-build-debug
 
-build all: phony lib/libmrFunc.dylib worker
+build all: phony lib/libmrFunc.dylib worker master
 
 # =============================================================================
 # Built-in targets

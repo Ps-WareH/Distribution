@@ -10,6 +10,7 @@ add_library(mrFunc SHARED src/mrFunc.cpp)
 
 # 构建主程序并链接动态库
 add_executable(worker src/worker.cpp)
+add_executable(master src/master.cpp)
 
 # 链接时指定库目录
 target_link_directories(worker PRIVATE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})

@@ -37,7 +37,6 @@ public:
             std::cerr << "Failed to get network addresses.\n";
             return "Error";
         }
-
         std::string ipAddress;
         struct ifaddrs *address = addresses;
         while (address) {

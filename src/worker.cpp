@@ -7,8 +7,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
+#include "../tempRPC/buttonrpc.hpp"
+#include <dlfcn.h>  // For dynamic library functions
 
-#include "../TempRPC/buttonrpc.hpp"
 using namespace std;
 
 class KeyValue{
@@ -19,8 +20,39 @@ public:
 } ;
 
 class Worker {
-
 public:
+    typedef vector<string> (*MapFunction)(KeyValue);
+    typedef vector<string> (*ReduceFunction)(KeyValue);
+
+    unordered_map<int, vector<string>> recordMidWork;
+    MapFunction mapF;
+    ReduceFunction rF;
+    buttonrpc work_client;
+    buttonrpc server;
+    int initialLib(){
+        void* handle = dlopen("../lib/libmrfunc.so", RTLD_LAZY);
+        if (!handle) {
+            std::cerr << "Cannot open library: " << dlerror() << '\n';
+            return 1;
+        }
+
+        // 获取函数的指针
+        dlerror();  // 清除现有的错误
+        this->mapF= (MapFunction)dlsym(handle, "mapF");
+        const char* dlsym_error = dlerror();
+        if (dlsym_error) {
+            std::cerr << "Cannot load symbol 'mapF': " << dlsym_error << '\n';
+            dlclose(handle);
+            return 1;
+        }
+        server.as_server(5555);
+        server.bind("getDataForHash", &Worker::getDataForHash, this);
+
+    }
+
+    Worker(){
+        initialLib();
+    }
     int ihash(const std::string& key) {
         int hash = 0;
         for (char c : key) {
@@ -32,7 +64,6 @@ public:
     }
     string getLocalIP() {
         struct ifaddrs *addresses;
-
         if (getifaddrs(&addresses) == -1) {
             std::cerr << "Failed to get network addresses.\n";
             return "Error";
@@ -50,33 +81,43 @@ public:
             }
             address = address->ifa_next;
         }
-
         freeifaddrs(addresses);
         return ipAddress.empty() ? "No IP Found" : ipAddress;
     }
-    void executeTasks(KeyValue task) {
-
+    void executeTasks() {
+        string ip = getLocalIP();
+        KeyValue task = work_client.call<KeyValue>("assignTasks").val();
+        if(task.isMapTask){
+            vector<string> res = mapF(task);
+            //先记录在buffer里面吧
+            vector<int> ihashVs;
+            for(auto& t:res){
+                int temp = ihash(t);
+                if(recordMidWork.find(temp)==recordMidWork.end()){
+                    ihashVs.push_back(temp);
+                    recordMidWork[temp]={t};
+                }else recordMidWork[temp].push_back(t);
+            }
+            work_client.call<void>("setAMapTaskDone", ip, ihashVs);
+        }else{
+            //reduce
+        }
+    }
+    vector<string> getDataForHash(const int& hashKey) {
+       return recordMidWork[hashKey];
     }
 
-    void reportCompletedTasks() {
-        // 向 Master 报告已完成的任务编号
-    }
+
 };
 
 int main() {
     //假设每个节点都先是单线程
     Worker* worker = new Worker();
-    buttonrpc work_client;
-    string ip = worker->getLocalIP();
-    work_client.as_client("127.0.0.1", 5555);
-    work_client.set_timeout(5000);
+    worker->work_client.as_client("127.0.0.1", 5555);
+    worker->work_client.set_timeout(5000);
     //待办：改成while（1）循环，
-    KeyValue task = work_client.call<KeyValue>("assignTasks").val();
-    worker->executeTasks(task);
-    //任务结束了
-    work_client.call<void>("setAMapTaskDone",  ip);
+    while(1) {
+        worker->executeTasks();
+    }
 
-}
-
-    return 0;
 }

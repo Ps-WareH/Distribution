@@ -3,7 +3,7 @@
 //
 #include <unordered_map>
 #include <string>
-#include "../TempRPC/buttonrpc.hpp"
+#include "../tempRPC/buttonrpc.hpp"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -49,6 +49,7 @@ public:
                     KeyValue* temp = new KeyValue();
                     temp->key= entry.path().string();
                     temp->value= to_string(start)+'/'+ to_string(end);
+                    temp->isMapTask=true;
                     mapTasks.push_back(*temp);
                 }
             }
@@ -71,6 +72,7 @@ public:
             reduceTasks.pop_back();
         }
         reduceTaskMtx.unlock();
+        //another pthread to wait
         return temp;
     }
     KeyValue assignMapTask(){
@@ -87,8 +89,10 @@ public:
             mapTasks.pop_back();
         }
         mapTaskMtx.unlock();
-        //filename,start/end
+
+        //another pthread to wait
         return temp;
+        //filename,start/end
     }
 
     KeyValue assignTasks() {
@@ -112,11 +116,13 @@ public:
             reduceTasks.push_back(*temp);
         }
     }
-    void setAMapTaskDone(const std::string& workerIp){
+    void setAMapTaskDone(const std::string& workerIp,  vector<int> ihashValue){
         accessMapStatMtx.lock();
         finishedMapNum+=1;
         mapWorkerIPs.insert(workerIp);
+        for(auto& q: ihashValue)this->ihashValues.insert(q);
         //这个if只运行一次
+        //all map task done
         if(finishedMapNum==mapTotalNum){
             mapDone=true;//下次assignTask就是reduce了！
             ipReformat="";
@@ -139,7 +145,7 @@ int main(int argc, char* argv[]){
 
     buttonrpc server;
     server.as_server(5555);
-
+    //多个线程还是queue？
     server.bind("assignTasks", &Master::assignTasks, master);
     server.bind("setAMapTaskDone", &Master::setAMapTaskDone, master);
     server.run();

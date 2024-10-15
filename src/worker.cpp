@@ -23,12 +23,11 @@ class Worker {
 public:
     typedef vector<string> (*MapFunction)(KeyValue);
     typedef vector<string> (*ReduceFunction)(KeyValue);
-
     unordered_map<int, vector<string>> recordMidWork;
     MapFunction mapF;
     ReduceFunction rF;
     buttonrpc work_client;
-    buttonrpc server;
+
     int initialLib(){
         void* handle = dlopen("../lib/libmrfunc.so", RTLD_LAZY);
         if (!handle) {
@@ -45,9 +44,6 @@ public:
             dlclose(handle);
             return 1;
         }
-        server.as_server(5555);
-        server.bind("getDataForHash", &Worker::getDataForHash, this);
-
     }
 
     Worker(){
@@ -101,13 +97,19 @@ public:
             work_client.call<void>("setAMapTaskDone", ip, ihashVs);
         }else{
             //reduce
+
         }
     }
     vector<string> getDataForHash(const int& hashKey) {
        return recordMidWork[hashKey];
     }
-
-
+    static void* startServer(void* arg) {
+        Worker* worker = static_cast<Worker*>(arg);
+        buttonrpc server;
+        server.as_server(5554);
+        server.bind("getDataForHash",&Worker::getDataForHash,worker);
+        server.run();
+    }
 };
 
 int main() {
@@ -115,9 +117,11 @@ int main() {
     Worker* worker = new Worker();
     worker->work_client.as_client("127.0.0.1", 5555);
     worker->work_client.set_timeout(5000);
+    pthread_t serverThread;
+    pthread_create(&serverThread,NULL,Worker::startServer,worker);
+
     //待办：改成while（1）循环，
     while(1) {
         worker->executeTasks();
     }
-
 }

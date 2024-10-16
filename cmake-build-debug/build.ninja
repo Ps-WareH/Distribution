@@ -97,16 +97,16 @@ build CMakeFiles/worker.dir/src/worker.cpp.o: CXX_COMPILER__worker_unscanned_Deb
 
 
 #############################################
-# Link the executable worker
+# Link the executable bin/worker
 
-build worker: CXX_EXECUTABLE_LINKER__worker_Debug CMakeFiles/worker.dir/src/worker.cpp.o
+build bin/worker: CXX_EXECUTABLE_LINKER__worker_Debug CMakeFiles/worker.dir/src/worker.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk
   LINK_LIBRARIES = -Wl,-rpath,/Users/zhangbokun/Documents/mr/cmake-build-debug/lib  -ldl
   LINK_PATH = -L/Users/zhangbokun/Documents/mr/cmake-build-debug/lib
   OBJECT_DIR = CMakeFiles/worker.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = worker
+  TARGET_FILE = bin/worker
   TARGET_PDB = worker.dbg
 
 # =============================================================================
@@ -130,14 +130,14 @@ build CMakeFiles/master.dir/src/master.cpp.o: CXX_COMPILER__master_unscanned_Deb
 
 
 #############################################
-# Link the executable master
+# Link the executable bin/master
 
-build master: CXX_EXECUTABLE_LINKER__master_Debug CMakeFiles/master.dir/src/master.cpp.o
+build bin/master: CXX_EXECUTABLE_LINKER__master_Debug CMakeFiles/master.dir/src/master.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk
   OBJECT_DIR = CMakeFiles/master.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = master
+  TARGET_FILE = bin/master
   TARGET_PDB = master.dbg
 
 
@@ -168,7 +168,11 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build libmrFunc.dylib: phony lib/libmrFunc.dylib
 
+build master: phony bin/master
+
 build mrFunc: phony lib/libmrFunc.dylib
+
+build worker: phony bin/worker
 
 # =============================================================================
 # Folder targets.
@@ -178,7 +182,7 @@ build mrFunc: phony lib/libmrFunc.dylib
 #############################################
 # Folder: /Users/zhangbokun/Documents/mr/cmake-build-debug
 
-build all: phony lib/libmrFunc.dylib worker master
+build all: phony lib/libmrFunc.dylib bin/worker bin/master
 
 # =============================================================================
 # Built-in targets

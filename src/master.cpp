@@ -7,37 +7,46 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <unistd.h>
 #include <vector>
 #include "worker.cpp"
 #include <unordered_set>
 using namespace std;
 namespace fs = std::filesystem;
+
+
 class Master {
 private:
     vector<KeyValue> mapTasks;
     mutex mapTaskMtx;
     mutex reduceTaskMtx;
     vector<KeyValue> reduceTasks;
+    mutex finishRMtx;
+    unordered_set<int> finishedReduceTasks;
     mutex accessMapStatMtx;
     bool mapDone=false;
     unordered_set<string> mapWorkerIPs;
     string ipReformat;
     unordered_set<int> ihashValues;
     int finishedMapNum=0;
+    unordered_set<KeyValue> curRunningMaps;
+
     int mapTotalNum = 0;
 
 public:
+    struct ThreadParams {
+        Master* masterPtr;  // 指向类实例的指针
+        KeyValue temp;        // 正在被检查的task
+    };
     void loadTasks(const string& path,size_t partSize) {
         // 遍历指定路径下的所有文件
         for (const auto &entry: fs::directory_iterator(path)) {
             if (entry.is_regular_file()) {
                 ifstream file(entry.path(), std::ios::binary);
-
                 if (!file) {
                     std::cerr << "Failed to open " << entry.path() << '\n';
                     continue;
                 }
-
                 size_t fileSize = file.tellg(); // 获取文件大小
                 file.close();
 
@@ -56,6 +65,25 @@ public:
         }
         mapTotalNum=mapTasks.size();
     }
+    static void* waitRTime(void* arg){
+        sleep(5);
+    }
+    static void* waitReduceTask(void* arg){
+        ThreadParams* params = static_cast<ThreadParams*>(arg);
+        pthread_t t;
+        void* status;
+        pthread_create(&t, NULL, waitRTime, NULL);
+        pthread_join(t, &status);
+        //如何防止重复执行任务捏？？？？？
+        params->masterPtr->finishRMtx.lock();
+        if(params->masterPtr->finishedReduceTasks.find(stoi(params->temp.value))==params->masterPtr->finishedReduceTasks.end()){
+            params->masterPtr->reduceTaskMtx.lock();
+            params->masterPtr->reduceTasks.push_back(params->temp);
+            params->masterPtr->reduceTaskMtx.unlock();
+        }
+        params->masterPtr->finishRMtx.unlock();
+        delete params;
+    }
     KeyValue assignReduceTask(){
         //要告诉你位置
         //The locations of these buffered pairs on the local disk are
@@ -73,8 +101,16 @@ public:
         }
         reduceTaskMtx.unlock();
         //another pthread to wait
+        pthread_t tid;
+        ThreadParams* params = new ThreadParams();
+        params->masterPtr = this;  // 假设在类方法中使用
+        params->temp = temp; // tempValue 是你要传递的额外参数
+        pthread_create(&tid, NULL, waitReduceTask, params);
+        //创建一个用于回收计时线程及处理超时逻辑的线程，检查running task里面，没有我们的temp->value(就是ihash）就算完成啦
+        pthread_detach(tid);
         return temp;
     }
+
     KeyValue assignMapTask(){
         KeyValue temp;
         mapTaskMtx.lock();
@@ -87,14 +123,41 @@ public:
            //这个在server的线程需要等待任务结束
             temp = mapTasks.back();
             mapTasks.pop_back();
+            accessMapStatMtx.lock();
+            curRunningMaps.insert(temp);
+            accessMapStatMtx.unlock();
         }
         mapTaskMtx.unlock();
-
         //another pthread to wait
+        pthread_t tid;
+        ThreadParams* params = new ThreadParams();
+        params->masterPtr = this;  // 假设在类方法中使用
+        params->temp = temp; // tempValue 是你要传递的额外参数
+        pthread_create(&tid, NULL, waitMapTask, params);
+        //创建一个用于回收计时线程及处理超时逻辑的线程，检查running task里面，没有我们的temp就算完成啦
+        pthread_detach(tid);
         return temp;
         //filename,start/end
     }
-
+    static void* waitTime(void* arg){
+        sleep(3);
+    }
+    static void* waitMapTask(void* arg){
+        ThreadParams* params = static_cast<ThreadParams*>(arg);
+        pthread_t t;
+        void* status;
+        pthread_create(&t, NULL, waitTime, NULL);
+        pthread_join(t, &status);
+        //如何防止重复执行任务捏？？？？？
+        params->masterPtr->accessMapStatMtx.lock();
+        if(params->masterPtr->curRunningMaps.find(params->temp)!=params->masterPtr->curRunningMaps.end()){
+            params->masterPtr->mapTaskMtx.lock();
+            params->masterPtr->mapTasks.push_back(params->temp);
+            params->masterPtr->mapTaskMtx.unlock();
+        }
+        params->masterPtr->accessMapStatMtx.unlock();
+        delete params;
+    }
     KeyValue assignTasks() {
         // 分配任务给每个 Worker
         accessMapStatMtx.lock();
@@ -105,7 +168,6 @@ public:
             accessMapStatMtx.unlock();
             return assignMapTask();
         }
-
     }
     void makeReduceTask(){
         for(auto& i:ihashValues){
@@ -116,10 +178,16 @@ public:
             reduceTasks.push_back(*temp);
         }
     }
-    void setAMapTaskDone(const std::string& workerIp,  vector<int> ihashValue){
+    void setAReduceTaskDone(int iHashValue){
+        finishRMtx.lock();
+        finishedReduceTasks.insert(iHashValue);
+        finishRMtx.unlock();
+    }
+    void setAMapTaskDone(const std::string& workerIp,  vector<int> ihashValue,KeyValue kv){
         accessMapStatMtx.lock();
         finishedMapNum+=1;
         mapWorkerIPs.insert(workerIp);
+        remove(curRunningMaps.begin(), curRunningMaps.end(),kv);
         for(auto& q: ihashValue)this->ihashValues.insert(q);
         //这个if只运行一次
         //all map task done
@@ -132,10 +200,6 @@ public:
         accessMapStatMtx.unlock();
     }
 
-    void waitAll() {
-        // 等待所有 Worker 完成或超时
-        // 检查哪些任务完成，哪些需要重分配
-    }
 };
 
 int main(int argc, char* argv[]){
@@ -148,5 +212,6 @@ int main(int argc, char* argv[]){
     //多个线程还是queue？
     server.bind("assignTasks", &Master::assignTasks, master);
     server.bind("setAMapTaskDone", &Master::setAMapTaskDone, master);
+    server.bind("setAReduceTaskDone",&Master::setAReduceTaskDone,master);
     server.run();
 }

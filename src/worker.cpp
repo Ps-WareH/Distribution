@@ -11,23 +11,21 @@
 #include <dlfcn.h>  // For dynamic library functions
 
 using namespace std;
-
 class KeyValue{
 public:
     string key;
     string value;
     bool isMapTask;
 } ;
-
 class Worker {
 public:
+    vector<string> otherIps;
     typedef vector<string> (*MapFunction)(KeyValue);
     typedef vector<string> (*ReduceFunction)(KeyValue);
     unordered_map<int, vector<string>> recordMidWork;
     MapFunction mapF;
     ReduceFunction rF;
     buttonrpc work_client;
-
     int initialLib(){
         void* handle = dlopen("../lib/libmrfunc.so", RTLD_LAZY);
         if (!handle) {
@@ -94,12 +92,28 @@ public:
                     recordMidWork[temp]={t};
                 }else recordMidWork[temp].push_back(t);
             }
-            work_client.call<void>("setAMapTaskDone", ip, ihashVs);
+            work_client.call<void>("setAMapTaskDone", ip, ihashVs,task);
         }else{
             //reduce
-
+            //temp->key=ipReformat;
+            //temp->value=to_string(i);
+            if(otherIps.empty())otherIps=getOtherIps(task.key);
+            unordered_map<string,int> record;
+            for(auto& ip:otherIps){
+                this->work_client.as_client(ip,5554);
+                this->work_client.set_timeout(5000);
+                vector<string> temp= this->work_client.call<void>("getDataForHash",stoi(task.value)).val();
+                shuffle(record,temp);
+            }
+            writeFile(record);
+            this->work_client.as_client("127.0.0.1", 5555);
+            this->work_client.set_timeout(5000);
+            this->work_client.call<void>("setAReduceTaskDone",task.value);
         }
     }
+    void writeFile(unordered_map<string,int>& record);
+    void shuffle(unordered_map<string,int>& record,vector<string>& temp);
+    vector<string> getOtherIps(string s);
     vector<string> getDataForHash(const int& hashKey) {
        return recordMidWork[hashKey];
     }
@@ -119,7 +133,7 @@ int main() {
     worker->work_client.set_timeout(5000);
     pthread_t serverThread;
     pthread_create(&serverThread,NULL,Worker::startServer,worker);
-
+    pthread_detach(serverThread);
     //待办：改成while（1）循环，
     while(1) {
         worker->executeTasks();

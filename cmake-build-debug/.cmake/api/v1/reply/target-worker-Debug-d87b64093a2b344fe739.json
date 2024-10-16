@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "master"
+			"path" : "bin/worker"
 		}
 	],
 	"backtrace" : 1,
@@ -10,7 +10,9 @@
 	{
 		"commands" : 
 		[
-			"add_executable"
+			"add_executable",
+			"target_link_directories",
+			"target_link_libraries"
 		],
 		"files" : 
 		[
@@ -25,6 +27,18 @@
 				"command" : 0,
 				"file" : 0,
 				"line" : 13,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 17,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 20,
 				"parent" : 0
 			}
 		]
@@ -53,7 +67,7 @@
 			]
 		}
 	],
-	"id" : "master::@6890427a1f51a3e7e1df",
+	"id" : "worker::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -65,12 +79,26 @@
 			{
 				"fragment" : "",
 				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-L/Users/zhangbokun/Documents/mr/cmake-build-debug/lib",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/Users/zhangbokun/Documents/mr/cmake-build-debug/lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-ldl",
+				"role" : "libraries"
 			}
 		],
 		"language" : "CXX"
 	},
-	"name" : "master",
-	"nameOnDisk" : "master",
+	"name" : "worker",
+	"nameOnDisk" : "worker",
 	"paths" : 
 	{
 		"build" : ".",
@@ -91,7 +119,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "src/master.cpp",
+			"path" : "src/worker.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],

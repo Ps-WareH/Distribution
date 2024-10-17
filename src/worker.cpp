@@ -4,19 +4,15 @@
 #include <ifaddrs.h>
 #include <iostream>
 #include <netdb.h>
+#include <fstream>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
 #include "../tempRPC/buttonrpc.hpp"
 #include <dlfcn.h>  // For dynamic library functions
-
+#include "KeyValue.h"
 using namespace std;
-class KeyValue{
-public:
-    string key;
-    string value;
-    bool isMapTask;
-} ;
+
 class Worker {
 public:
     vector<string> otherIps;
@@ -79,8 +75,10 @@ public:
         return ipAddress.empty() ? "No IP Found" : ipAddress;
     }
     void executeTasks() {
-        string ip = getLocalIP();
         KeyValue task = work_client.call<KeyValue>("assignTasks").val();
+        if(task.key=="empty")return;
+        string ip = getLocalIP();
+
         if(task.isMapTask){
             vector<string> res = mapF(task);
             //先记录在buffer里面吧
@@ -102,18 +100,51 @@ public:
             for(auto& ip:otherIps){
                 this->work_client.as_client(ip,5554);
                 this->work_client.set_timeout(5000);
-                vector<string> temp= this->work_client.call<void>("getDataForHash",stoi(task.value)).val();
+                vector<string> temp= this->work_client.call<vector<string>>("getDataForHash",stoi(task.value)).val();
                 shuffle(record,temp);
             }
-            writeFile(record);
+            writeFile(record,stoi(task.value));
             this->work_client.as_client("127.0.0.1", 5555);
             this->work_client.set_timeout(5000);
             this->work_client.call<void>("setAReduceTaskDone",task.value);
         }
     }
-    void writeFile(unordered_map<string,int>& record);
-    void shuffle(unordered_map<string,int>& record,vector<string>& temp);
-    vector<string> getOtherIps(string s);
+    void writeFile(unordered_map<string,int>& record,int hashValue){
+        std::ofstream outFile("records_"+to_string(hashValue)+".txt");
+        if (outFile.is_open()) {
+            // 遍历map中的每个元素并写入文件
+            for (const auto& pair : record) {
+                outFile << pair.first << ": " << to_string(pair.second) << std::endl;
+            }
+            outFile.close(); // 关闭文件流
+            std::cout << "Records written to file successfully." << std::endl;
+        } else {
+            std::cout << "Unable to open file." << std::endl;
+        }
+
+    }
+    void shuffle(unordered_map<string,int>& record,vector<string>& temp){
+        for(auto& s:temp) {
+            if (record.find(s) == record.end()) {
+                record[s] = 1;
+            } else { record[s] += 1; }
+        }
+    }
+    vector<string> getOtherIps(string s){
+        vector<string> allIps;
+        string res = "";
+        int count = 0;
+        while(count<s.size()){
+            if(s[count]=='/'){
+                allIps.push_back(res);
+                res="";
+            }else{
+                res+=s[count];
+            }
+            count+=1;
+        }
+        return allIps;
+    }
     vector<string> getDataForHash(const int& hashKey) {
        return recordMidWork[hashKey];
     }

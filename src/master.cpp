@@ -9,7 +9,7 @@
 #include <filesystem>
 #include <unistd.h>
 #include <vector>
-#include "worker.cpp"
+#include "KeyValue.h"
 #include <unordered_set>
 using namespace std;
 namespace fs = std::filesystem;
@@ -29,7 +29,7 @@ private:
     string ipReformat;
     unordered_set<int> ihashValues;
     int finishedMapNum=0;
-    unordered_set<KeyValue> curRunningMaps;
+    unordered_set<KeyValue,TaskHash,TaskEqual> curRunningMaps;
 
     int mapTotalNum = 0;
 
@@ -187,7 +187,7 @@ public:
         accessMapStatMtx.lock();
         finishedMapNum+=1;
         mapWorkerIPs.insert(workerIp);
-        remove(curRunningMaps.begin(), curRunningMaps.end(),kv);
+        curRunningMaps.erase(kv);
         for(auto& q: ihashValue)this->ihashValues.insert(q);
         //这个if只运行一次
         //all map task done

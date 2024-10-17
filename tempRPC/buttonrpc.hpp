@@ -12,7 +12,7 @@
 #include <sstream>
 #include <functional>
 #include <memory>
-#include <zmq.hpp>
+#include "dependencies/zmq.hpp"
 #include "Serializer.hpp"
 
 

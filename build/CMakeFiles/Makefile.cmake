@@ -27,6 +27,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeDetermineCompilerSupport.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeDetermineSystem.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeFindBinUtils.cmake"
+  "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeFindDependencyMacro.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeGenericSystem.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeInitializeConfigs.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeLanguageInformation.cmake"
@@ -103,6 +104,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/FindPackageMessage.cmake"
+  "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/FindPkgConfig.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/FindThreads.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Internal/CMakeDetermineLinkerId.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Internal/CheckSourceCompiles.cmake"
@@ -116,6 +118,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Platform/Darwin-Initialize.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Platform/Darwin.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Platform/UnixPaths.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/cppzmqConfig.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/cppzmqConfigVersion.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/cppzmqTargets.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/libzmq-pkg-config/FindZeroMQ.cmake"
   )
 
 # The corresponding makefile is:

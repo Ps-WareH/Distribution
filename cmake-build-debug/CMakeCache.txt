@@ -219,14 +219,23 @@ MapReduce_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 MapReduce_SOURCE_DIR:STATIC=/Users/zhangbokun/Documents/mr
 
-//Value Computed by CMake
-mr_BINARY_DIR:STATIC=/Users/zhangbokun/Documents/mr/cmake-build-debug
+//Arguments to supply to pkg-config
+PKG_CONFIG_ARGN:STRING=
 
-//Value Computed by CMake
-mr_IS_TOP_LEVEL:STATIC=ON
+//pkg-config executable
+PKG_CONFIG_EXECUTABLE:FILEPATH=PKG_CONFIG_EXECUTABLE-NOTFOUND
 
-//Value Computed by CMake
-mr_SOURCE_DIR:STATIC=/Users/zhangbokun/Documents/mr
+//The directory containing a CMake configuration file for ZeroMQ.
+ZeroMQ_DIR:PATH=ZeroMQ_DIR-NOTFOUND
+
+//Path to a file.
+ZeroMQ_INCLUDE_DIR:PATH=/opt/homebrew/include
+
+//Path to a library.
+ZeroMQ_LIBRARY:FILEPATH=/opt/homebrew/lib/libzmq.dylib
+
+//The directory containing a CMake configuration file for cppzmq.
+cppzmq_DIR:PATH=/opt/homebrew/share/cmake/cppzmq
 
 
 ########################
@@ -368,4 +377,32 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
+//Details about finding ZeroMQ
+FIND_PACKAGE_MESSAGE_DETAILS_ZeroMQ:INTERNAL=[/opt/homebrew/lib/libzmq.dylib][/opt/homebrew/include][v()]
+PC_LIBZMQ_CFLAGS:INTERNAL=
+PC_LIBZMQ_CFLAGS_I:INTERNAL=
+PC_LIBZMQ_CFLAGS_OTHER:INTERNAL=
+PC_LIBZMQ_FOUND:INTERNAL=
+PC_LIBZMQ_INCLUDEDIR:INTERNAL=
+PC_LIBZMQ_LIBDIR:INTERNAL=
+PC_LIBZMQ_LIBS:INTERNAL=
+PC_LIBZMQ_LIBS_L:INTERNAL=
+PC_LIBZMQ_LIBS_OTHER:INTERNAL=
+PC_LIBZMQ_LIBS_PATHS:INTERNAL=
+PC_LIBZMQ_MODULE_NAME:INTERNAL=
+PC_LIBZMQ_PREFIX:INTERNAL=
+PC_LIBZMQ_STATIC_CFLAGS:INTERNAL=
+PC_LIBZMQ_STATIC_CFLAGS_I:INTERNAL=
+PC_LIBZMQ_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_LIBZMQ_STATIC_LIBDIR:INTERNAL=
+PC_LIBZMQ_STATIC_LIBS:INTERNAL=
+PC_LIBZMQ_STATIC_LIBS_L:INTERNAL=
+PC_LIBZMQ_STATIC_LIBS_OTHER:INTERNAL=
+PC_LIBZMQ_STATIC_LIBS_PATHS:INTERNAL=
+PC_LIBZMQ_VERSION:INTERNAL=
+//ADVANCED property for variable: PKG_CONFIG_ARGN
+PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
+PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+__pkg_config_checked_PC_LIBZMQ:INTERNAL=1
 

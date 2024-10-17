@@ -12,14 +12,17 @@ add_library(mrFunc SHARED src/mrFunc.cpp)
 # 构建主程序并链接动态库
 add_executable(worker src/worker.cpp)
 add_executable(master src/master.cpp)
-
+target_include_directories(worker PRIVATE ${CMAKE_SOURCE_DIR}/tempRPC/dependencies)
 # 链接 pthread 库
 find_package(Threads REQUIRED)  # 查找线程库
 
 # 链接时指定库目录
 target_link_directories(worker PRIVATE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 target_link_directories(master PRIVATE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+#find cppzmq wrapper, installed by make of cppzmq
+find_package(cppzmq)
+# 链接 worker
+target_link_libraries(worker PRIVATE dl Threads::Threads)
 
-# 链接主程序和动态库
-target_link_libraries(worker PRIVATE dl Threads::Threads)  # Linux 上需要链接 `dl` 库及 pthread
-target_link_libraries(master PRIVATE dl Threads::Threads)  # 同上
+# 链接 master
+target_link_libraries(master PRIVATE dl Threads::Threads)

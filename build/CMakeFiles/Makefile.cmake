@@ -11,8 +11,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.30.4/CMakeCCompiler.cmake"
   "CMakeFiles/3.30.4/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.30.4/CMakeSystem.cmake"
-  "/Users/zhangbokun/Documents/distribution/mr/cmake/build.cmake"
-  "/Users/zhangbokun/Documents/distribution/mr/cmake/develop.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeCCompiler.cmake.in"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeCCompilerABI.c"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeCInformation.cmake"
@@ -29,6 +27,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeDetermineCompilerSupport.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeDetermineSystem.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeFindBinUtils.cmake"
+  "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeFindDependencyMacro.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeGenericSystem.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeInitializeConfigs.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/CMakeLanguageInformation.cmake"
@@ -118,6 +117,13 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Platform/Darwin-Initialize.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Platform/Darwin.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.4/share/cmake/Modules/Platform/UnixPaths.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/cppzmqConfig.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/cppzmqConfigVersion.cmake"
+  "/opt/homebrew/share/cmake/cppzmq/cppzmqTargets.cmake"
+  "/usr/local/lib/cmake/ZeroMQ/ZeroMQConfig.cmake"
+  "/usr/local/lib/cmake/ZeroMQ/ZeroMQConfigVersion.cmake"
+  "/usr/local/lib/cmake/ZeroMQ/ZeroMQTargets-release.cmake"
+  "/usr/local/lib/cmake/ZeroMQ/ZeroMQTargets.cmake"
   )
 
 # The corresponding makefile is:
@@ -138,7 +144,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/mrFunc.dir/DependInfo.cmake"
   "CMakeFiles/worker.dir/DependInfo.cmake"
   "CMakeFiles/master.dir/DependInfo.cmake"
   )

@@ -92,7 +92,8 @@ worker_EXTERNAL_OBJECTS =
 
 bin/worker: CMakeFiles/worker.dir/src/worker.cpp.o
 bin/worker: CMakeFiles/worker.dir/build.make
-bin/worker: lib/libmrFunc.dylib
+bin/worker: /usr/local/lib/libzmq.5.2.6.dylib
+bin/worker: /opt/homebrew/lib/libgnutls.dylib
 bin/worker: CMakeFiles/worker.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/zhangbokun/Documents/distribution/mr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable bin/worker"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/worker.dir/link.txt --verbose=$(VERBOSE)

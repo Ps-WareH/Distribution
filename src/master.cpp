@@ -3,7 +3,7 @@
 //
 #include <unordered_map>
 #include <string>
-#include <rest_rpc.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -11,8 +11,7 @@
 #include <vector>
 #include "KeyValue.h"
 #include <unordered_set>
-using namespace rest_rpc;
-using namespace rpc_service;
+#include "../depends/buttonrpc.hpp"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -160,7 +159,7 @@ public:
         params->masterPtr->accessMapStatMtx.unlock();
         delete params;
     }
-    KeyValue assignTasks(rpc_conn conn) {
+    KeyValue assignTasks() {
         // 分配任务给每个 Worker
         accessMapStatMtx.lock();
         if(mapDone){//reduce
@@ -180,12 +179,12 @@ public:
             reduceTasks.push_back(*temp);
         }
     }
-    void setAReduceTaskDone(rpc_conn conn, int iHashValue){
+    void setAReduceTaskDone(int iHashValue){
         finishRMtx.lock();
         finishedReduceTasks.insert(iHashValue);
         finishRMtx.unlock();
     }
-    void setAMapTaskDone(rpc_conn conn, const std::string& workerIp,  vector<int> ihashValue,KeyValue kv){
+    void setAMapTaskDone(const std::string& workerIp,  vector<int> ihashValue,KeyValue kv){
         accessMapStatMtx.lock();
         finishedMapNum+=1;
         mapWorkerIPs.insert(workerIp);
@@ -209,10 +208,11 @@ int main(int argc, char* argv[]){
     size_t temp = stoi(argv[1]);
     master ->loadTasks(argv[0],temp);
 
-    rpc_server server(9000, std::thread::hardware_concurrency());
+    buttonrpc server;
+    server.as_server(5555);
     //多个线程还是queue？
-    server.register_handler("assignTasks", &Master::assignTasks, master);
-    server.register_handler("setAMapTaskDone", &Master::setAMapTaskDone, master);
-    server.register_handler("setAReduceTaskDone",&Master::setAReduceTaskDone,master);
+    server.bind("assignTasks", &Master::assignTasks, master);
+    server.bind("setAMapTaskDone", &Master::setAMapTaskDone, master);
+    server.bind("setAReduceTaskDone",&Master::setAReduceTaskDone,master);
     server.run();
 }

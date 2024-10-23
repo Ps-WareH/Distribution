@@ -92,7 +92,8 @@ master_EXTERNAL_OBJECTS =
 
 bin/master: CMakeFiles/master.dir/src/master.cpp.o
 bin/master: CMakeFiles/master.dir/build.make
-bin/master: lib/libmrFunc.dylib
+bin/master: /usr/local/lib/libzmq.5.2.6.dylib
+bin/master: /opt/homebrew/lib/libgnutls.dylib
 bin/master: CMakeFiles/master.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/zhangbokun/Documents/distribution/mr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable bin/master"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/master.dir/link.txt --verbose=$(VERBOSE)

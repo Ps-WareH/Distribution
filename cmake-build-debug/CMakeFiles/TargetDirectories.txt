@@ -1,6 +1,4 @@
-/Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/CMakeFiles/mrFunc.dir
 /Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/CMakeFiles/worker.dir
 /Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/CMakeFiles/master.dir
-/Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/CMakeFiles/test.dir
 /Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/CMakeFiles/edit_cache.dir
 /Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/CMakeFiles/rebuild_cache.dir

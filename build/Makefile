@@ -65,16 +65,6 @@ CMAKE_BINARY_DIR = /Users/zhangbokun/Documents/distribution/mr/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
-	/opt/homebrew/Cellar/cmake/3.30.4/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-.PHONY : test/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
@@ -127,19 +117,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named mrFunc
-
-# Build rule for target.
-mrFunc: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mrFunc
-.PHONY : mrFunc
-
-# fast build rule for target.
-mrFunc/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrFunc.dir/build.make CMakeFiles/mrFunc.dir/build
-.PHONY : mrFunc/fast
-
-#=============================================================================
 # Target rules for targets named worker
 
 # Build rule for target.
@@ -189,30 +166,6 @@ src/master.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/master.dir/build.make CMakeFiles/master.dir/src/master.cpp.s
 .PHONY : src/master.cpp.s
 
-src/mrFunc.o: src/mrFunc.cpp.o
-.PHONY : src/mrFunc.o
-
-# target to build an object file
-src/mrFunc.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrFunc.dir/build.make CMakeFiles/mrFunc.dir/src/mrFunc.cpp.o
-.PHONY : src/mrFunc.cpp.o
-
-src/mrFunc.i: src/mrFunc.cpp.i
-.PHONY : src/mrFunc.i
-
-# target to preprocess a source file
-src/mrFunc.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrFunc.dir/build.make CMakeFiles/mrFunc.dir/src/mrFunc.cpp.i
-.PHONY : src/mrFunc.cpp.i
-
-src/mrFunc.s: src/mrFunc.cpp.s
-.PHONY : src/mrFunc.s
-
-# target to generate assembly for a file
-src/mrFunc.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mrFunc.dir/build.make CMakeFiles/mrFunc.dir/src/mrFunc.cpp.s
-.PHONY : src/mrFunc.cpp.s
-
 src/worker.o: src/worker.cpp.o
 .PHONY : src/worker.o
 
@@ -245,16 +198,11 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... test"
 	@echo "... master"
-	@echo "... mrFunc"
 	@echo "... worker"
 	@echo "... src/master.o"
 	@echo "... src/master.i"
 	@echo "... src/master.s"
-	@echo "... src/mrFunc.o"
-	@echo "... src/mrFunc.i"
-	@echo "... src/mrFunc.s"
 	@echo "... src/worker.o"
 	@echo "... src/worker.i"
 	@echo "... src/worker.s"

@@ -1,3 +1,5 @@
+#include <string>
+#include <functional>
 
 #include <vector>
 using namespace std;
@@ -16,8 +18,8 @@ struct TaskEqual{
         return k1.value==k2.value && k1.key==k2.key;
     }
 };
-struct TaskHash{
+struct TaskHash {
     std::size_t operator()(const KeyValue& kv) const {
-        return hash<string>()(kv.key) ^ (hash<string>()(kv.value) << 1);
+        return std::hash<std::string>()(kv.key) ^ (std::hash<std::string>()(kv.value) << 1);
     }
 };

@@ -11,17 +11,15 @@
 		"commands" : 
 		[
 			"add_executable",
-			"target_link_directories",
 			"target_link_libraries",
-			"set_target_properties",
+			"add_definitions",
 			"include",
-			"find_package"
+			"include_directories"
 		],
 		"files" : 
 		[
 			"CMakeLists.txt",
-			"/opt/homebrew/share/cmake/cppzmq/cppzmqTargets.cmake",
-			"/opt/homebrew/share/cmake/cppzmq/cppzmqConfig.cmake"
+			"cmake/develop.cmake"
 		],
 		"nodes" : 
 		[
@@ -31,7 +29,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 14,
+				"line" : 18,
 				"parent" : 0
 			},
 			{
@@ -41,36 +39,26 @@
 				"parent" : 0
 			},
 			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 14,
+				"parent" : 0
+			},
+			{
+				"file" : 1,
+				"parent" : 3
+			},
+			{
 				"command" : 2,
-				"file" : 0,
-				"line" : 28,
-				"parent" : 0
-			},
-			{
-				"command" : 5,
-				"file" : 0,
-				"line" : 23,
-				"parent" : 0
-			},
-			{
-				"file" : 2,
+				"file" : 1,
+				"line" : 13,
 				"parent" : 4
 			},
 			{
 				"command" : 4,
-				"file" : 2,
-				"line" : 57,
-				"parent" : 5
-			},
-			{
-				"file" : 1,
-				"parent" : 6
-			},
-			{
-				"command" : 3,
-				"file" : 1,
-				"line" : 61,
-				"parent" : 7
+				"file" : 0,
+				"line" : 8,
+				"parent" : 0
 			}
 		]
 	},
@@ -80,15 +68,21 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk -fcolor-diagnostics"
+					"fragment" : " -pthread -std=c++11 -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk -fcolor-diagnostics"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 5,
+					"define" : "MSGPACK_NO_BOOST"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 3,
-					"isSystem" : true,
-					"path" : "/opt/homebrew/include"
+					"backtrace" : 6,
+					"path" : "/Users/zhangbokun/Documents/distribution/mr/include"
 				}
 			],
 			"language" : "CXX",
@@ -106,13 +100,20 @@
 			]
 		}
 	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "mrFunc::@6890427a1f51a3e7e1df"
+		}
+	],
 	"id" : "master::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-g",
+				"fragment" : "-pthread -std=c++11 -g",
 				"role" : "flags"
 			},
 			{
@@ -120,22 +121,12 @@
 				"role" : "flags"
 			},
 			{
+				"fragment" : "-Wl,-rpath,/Users/zhangbokun/Documents/distribution/mr/cmake-build-debug/lib",
+				"role" : "libraries"
+			},
+			{
 				"backtrace" : 2,
-				"fragment" : "-L/Users/zhangbokun/Documents/mr/cmake-build-debug/lib",
-				"role" : "libraryPath"
-			},
-			{
-				"fragment" : "-Wl,-rpath,/Users/zhangbokun/Documents/mr/cmake-build-debug/lib",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
-				"fragment" : "-ldl",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 8,
-				"fragment" : "/opt/homebrew/lib/libzmq.dylib",
+				"fragment" : "lib/libmrFunc.dylib",
 				"role" : "libraries"
 			}
 		],

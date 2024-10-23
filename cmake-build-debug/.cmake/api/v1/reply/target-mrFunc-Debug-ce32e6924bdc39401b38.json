@@ -10,11 +10,15 @@
 	{
 		"commands" : 
 		[
-			"add_library"
+			"add_library",
+			"add_definitions",
+			"include",
+			"include_directories"
 		],
 		"files" : 
 		[
-			"CMakeLists.txt"
+			"CMakeLists.txt",
+			"cmake/develop.cmake"
 		],
 		"nodes" : 
 		[
@@ -24,7 +28,29 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 10,
+				"line" : 15,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 14,
+				"parent" : 0
+			},
+			{
+				"file" : 1,
+				"parent" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 13,
+				"parent" : 3
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 8,
 				"parent" : 0
 			}
 		]
@@ -35,13 +61,24 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk -fPIC -fcolor-diagnostics"
+					"fragment" : " -pthread -std=c++11 -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.4.sdk -fPIC -fcolor-diagnostics"
 				}
 			],
 			"defines" : 
 			[
 				{
+					"backtrace" : 4,
+					"define" : "MSGPACK_NO_BOOST"
+				},
+				{
 					"define" : "mrFunc_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "/Users/zhangbokun/Documents/distribution/mr/include"
 				}
 			],
 			"language" : "CXX",

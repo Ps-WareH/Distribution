@@ -57,13 +57,23 @@ RM = /opt/homebrew/Cellar/cmake/3.30.4/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/zhangbokun/Documents/mr
+CMAKE_SOURCE_DIR = /Users/zhangbokun/Documents/distribution/mr
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/zhangbokun/Documents/mr/build
+CMAKE_BINARY_DIR = /Users/zhangbokun/Documents/distribution/mr/build
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/opt/homebrew/Cellar/cmake/3.30.4/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -87,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/zhangbokun/Documents/mr/build/CMakeFiles /Users/zhangbokun/Documents/mr/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/zhangbokun/Documents/distribution/mr/build/CMakeFiles /Users/zhangbokun/Documents/distribution/mr/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/zhangbokun/Documents/mr/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/zhangbokun/Documents/distribution/mr/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -235,6 +245,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... master"
 	@echo "... mrFunc"
 	@echo "... worker"

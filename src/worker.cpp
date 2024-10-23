@@ -2,16 +2,18 @@
 #include <string>
 #include <pthread.h>
 #include <ifaddrs.h>
-#include <iostream>
+
 #include <netdb.h>
 #include <fstream>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <cstring>
-#include "../tempRPC/buttonrpc.hpp"
 #include <dlfcn.h>  // For dynamic library functions
+#include <rest_rpc.hpp>
 #include "KeyValue.h"
+using namespace rest_rpc;
+using namespace rpc_service;
 using namespace std;
+namespace fs = std::filesystem;
 
 class Worker {
 public:
@@ -21,14 +23,13 @@ public:
     unordered_map<int, vector<string>> recordMidWork;
     MapFunction mapF;
     ReduceFunction rF;
-    buttonrpc work_client;
+    rpc_client work_client;
     int initialLib(){
         void* handle = dlopen("../lib/libmrfunc.so", RTLD_LAZY);
         if (!handle) {
             std::cerr << "Cannot open library: " << dlerror() << '\n';
             return 1;
         }
-
         // 获取函数的指针
         dlerror();  // 清除现有的错误
         this->mapF= (MapFunction)dlsym(handle, "mapF");
@@ -40,8 +41,10 @@ public:
         }
     }
 
-    Worker(){
+    Worker(string ip, int portNum){
         initialLib();
+        rpc_client c(ip,portNum);
+        this->work_client=c;
     }
     int ihash(const std::string& key) {
         int hash = 0;
@@ -75,7 +78,8 @@ public:
         return ipAddress.empty() ? "No IP Found" : ipAddress;
     }
     void executeTasks() {
-        KeyValue task = work_client.call<KeyValue>("assignTasks").val();
+        this->work_client.connect();
+        KeyValue task = this->work_client.call<KeyValue>("assignTasks");
         if(task.key=="empty")return;
         string ip = getLocalIP();
 
@@ -98,13 +102,14 @@ public:
             if(otherIps.empty())otherIps=getOtherIps(task.key);
             unordered_map<string,int> record;
             for(auto& ip:otherIps){
-                this->work_client.as_client(ip,5554);
+                this->work_client.as_client(ip,9000);
                 this->work_client.set_timeout(5000);
-                vector<string> temp= this->work_client.call<vector<string>>("getDataForHash",stoi(task.value)).val();
+                this->work_client.connect();
+                vector<string> temp= this->work_client.call<vector<string>>("getDataForHash",stoi(task.value));
                 shuffle(record,temp);
             }
             writeFile(record,stoi(task.value));
-            this->work_client.as_client("127.0.0.1", 5555);
+            this->work_client.as_client("127.0.0.1", 9000);
             this->work_client.set_timeout(5000);
             this->work_client.call<void>("setAReduceTaskDone",task.value);
         }
@@ -145,23 +150,22 @@ public:
         }
         return allIps;
     }
-    vector<string> getDataForHash(const int& hashKey) {
+    vector<string> getDataForHash(rpc_conn conn,const int& hashKey) {
        return recordMidWork[hashKey];
     }
     static void* startServer(void* arg) {
         Worker* worker = static_cast<Worker*>(arg);
-        buttonrpc server;
-        server.as_server(5554);
-        server.bind("getDataForHash",&Worker::getDataForHash,worker);
+        rpc_server server(9000,std::thread::hardware_concurrency());
+        server.register_handler("getDataForHash",&Worker::getDataForHash,worker);
         server.run();
     }
 };
 
-int main() {
-    //假设每个节点都先是单线程
-    Worker* worker = new Worker();
-    worker->work_client.as_client("127.0.0.1", 5555);
-    worker->work_client.set_timeout(5000);
+int main(int argc, char* argv[]){
+    int portNum= stoi(argv[2]);
+    string ip = argv[1];
+    Worker* worker = new Worker(ip, portNum);
+
     pthread_t serverThread;
     pthread_create(&serverThread,NULL,Worker::startServer,worker);
     pthread_detach(serverThread);
